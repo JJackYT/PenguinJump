@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://bq4y3q3mbm6gd"]
+
+[ext_resource type="Script" path="res://PointsScript.gd" id="1_s0olg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nmsgl"]
+size = Vector2(50, 50)
+
+[node name="Points" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_s0olg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_nmsgl")
+debug_color = Color(0.879187, 0.708884, 0, 0.847059)

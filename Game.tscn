@@ -1,0 +1,54 @@
+[gd_scene load_steps=4 format=3 uid="uid://bapd0gqvgaqhg"]
+
+[ext_resource type="Script" path="res://GameScript.gd" id="1_252pb"]
+[ext_resource type="PackedScene" uid="uid://d2vlwtxnstpob" path="res://Player.tscn" id="1_m1kiw"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_up5pj"]
+size = Vector2(800, 50)
+
+[node name="Game" type="Node2D" node_paths=PackedStringArray("Player", "Floor", "ProjectileCollections", "Time_Keeper", "Point_Keeper")]
+script = ExtResource("1_252pb")
+Player = NodePath("Player")
+Floor = NodePath("Floor")
+ProjectileCollections = NodePath("ProjectileCollection")
+Time_Keeper = NodePath("UIControl/TimeLabel")
+Point_Keeper = NodePath("UIControl/PointsLabel")
+
+[node name="Player" parent="." instance=ExtResource("1_m1kiw")]
+position = Vector2(960, 750)
+
+[node name="Floor" type="CharacterBody2D" parent="."]
+position = Vector2(960, 800)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_up5pj")
+
+[node name="ColorRect" type="ColorRect" parent="Floor"]
+offset_left = -400.0
+offset_top = -25.0
+offset_right = 400.0
+offset_bottom = 25.0
+
+[node name="UIControl" type="Node" parent="."]
+
+[node name="PointsLabel" type="Label" parent="UIControl"]
+offset_left = 710.0
+offset_top = 50.0
+offset_right = 1210.0
+offset_bottom = 150.0
+theme_override_font_sizes/font_size = 60
+text = "POINTS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TimeLabel" type="Label" parent="UIControl"]
+offset_left = 50.0
+offset_top = 50.0
+offset_right = 550.0
+offset_bottom = 150.0
+theme_override_font_sizes/font_size = 40
+text = "TIME"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ProjectileCollection" type="Node2D" parent="."]

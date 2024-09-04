@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://bapd0gqvgaqhg"]
+
+[ext_resource type="Script" path="res://GameScript.gd" id="1_252pb"]
+[ext_resource type="PackedScene" uid="uid://d2vlwtxnstpob" path="res://Player.tscn" id="1_m1kiw"]
+[ext_resource type="Script" path="res://UI_Control.gd" id="3_lsopy"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_up5pj"]
+size = Vector2(800, 50)
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_252pb")
+
+[node name="Player" parent="." instance=ExtResource("1_m1kiw")]
+position = Vector2(960, 750)
+
+[node name="Floor" type="CharacterBody2D" parent="."]
+position = Vector2(960, 800)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_up5pj")
+
+[node name="UIControl" type="Node" parent="."]
+script = ExtResource("3_lsopy")

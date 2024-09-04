@@ -12,6 +12,9 @@ var MAX_CHARGE = 100
 @export var BombCollector : Area2D
 
 var on_floor : bool = false
+var Started : bool = false
+var GameOver : bool = false
+
 func _ready():
 	pass
 
@@ -27,14 +30,18 @@ func _process(delta:float):
 		
 
 func _physics_process(delta: float) -> void:
+	if position.y > 1080:
+		GotHit.emit()
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += GRAVITY * delta
 
 	# Handle jump.
-	if is_on_floor():
-		CheckJump()
-	
+	if not GameOver and Started:
+		if is_on_floor():
+			CheckJump()
+	else:
+		JUMP_CHARGE = 0
 	move_and_slide()
 
 func CheckJump():
@@ -64,3 +71,7 @@ func CollectPoint(Point):
 func BombHit(Bomb):
 	Bomb.Hit()
 	GotHit.emit()
+
+func Restart():
+	position = Vector2(960,700)
+	velocity.y = 0

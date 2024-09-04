@@ -6,7 +6,9 @@ var Speed : float = 0
 
 func _ready():
 	Speed = randf_range(100,250)
-	var Height = randf_range(250,900)
+	var Height = 900 - randf() * 650.0
+	#PDF = 650x + 250
+	#PDF 900 - 650x^2
 	if Direction == Directions.Left:
 		position.x = randi_range(1970,1995)
 	elif Direction == Directions.Right:

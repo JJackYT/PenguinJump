@@ -4,19 +4,15 @@
 [ext_resource type="PackedScene" uid="uid://d2vlwtxnstpob" path="res://Player.tscn" id="1_m1kiw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_up5pj"]
-size = Vector2(200, 50)
+size = Vector2(800, 50)
 
-[node name="Game" type="Node2D" node_paths=PackedStringArray("Player", "Floor", "ProjectileCollections", "Time_Keeper", "Point_Keeper", "GameOver_Label", "StartGame_Label", "HighScore_Label", "IceBergTexture")]
+[node name="Game" type="Node2D" node_paths=PackedStringArray("Player", "Floor", "ProjectileCollections", "Time_Keeper", "Point_Keeper")]
 script = ExtResource("1_252pb")
 Player = NodePath("Player")
 Floor = NodePath("Floor")
 ProjectileCollections = NodePath("ProjectileCollection")
 Time_Keeper = NodePath("UIControl/TimeLabel")
 Point_Keeper = NodePath("UIControl/PointsLabel")
-GameOver_Label = NodePath("UIControl/GameOver")
-StartGame_Label = NodePath("UIControl/StartGame")
-HighScore_Label = NodePath("UIControl/HighScoreLabel")
-IceBergTexture = NodePath("Floor/IceBergTexture")
 
 [node name="Player" parent="." instance=ExtResource("1_m1kiw")]
 position = Vector2(960, 750)
@@ -27,7 +23,7 @@ position = Vector2(960, 800)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
 shape = SubResource("RectangleShape2D_up5pj")
 
-[node name="IceBergTexture" type="ColorRect" parent="Floor"]
+[node name="ColorRect" type="ColorRect" parent="Floor"]
 offset_left = -400.0
 offset_top = -25.0
 offset_right = 400.0
@@ -52,16 +48,6 @@ offset_right = 550.0
 offset_bottom = 150.0
 theme_override_font_sizes/font_size = 40
 text = "TIME"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="HighScoreLabel" type="Label" parent="UIControl"]
-offset_left = 1370.0
-offset_top = 50.0
-offset_right = 1870.0
-offset_bottom = 150.0
-theme_override_font_sizes/font_size = 40
-text = "HIGHSCORE"
 horizontal_alignment = 1
 vertical_alignment = 1
 

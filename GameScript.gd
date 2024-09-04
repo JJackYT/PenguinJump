@@ -4,11 +4,12 @@ extends Node2D
 @export var Floor : Node2D
 @export var ProjectileCollections : Node2D
 
+var Max_Lives : int = 3
 var Lives : int = 3
 
-var Sink_Speed : float = 100.0
+var Start_Sink_Speed : float = 150.0
+var Sink_Speed : float = 150.0
 
-var GameOver : bool = false
 var Floor_Time : int = 0
 var Air_Time : int = 0
 var Total_Time : int = 0
@@ -20,6 +21,13 @@ var BombChance : float = 0.1
 var ProjectileCooldown : int = 0
 var ProjectileRate : int = 20
 
+var Started : bool = false
+var GameOver : bool = false
+
+var Combo : int = 0
+
+var HighScore : int = 0
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Player.CollectedPoint.connect(CollectedPoints)
@@ -29,15 +37,29 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	
-	Floor.position.y = move_toward(Floor.position.y, 800 + (200 * Floor_Time / Sink_Speed) ,2)
+	Floor.position.y = move_toward(Floor.position.y, 800 + (300 * Floor_Time / Sink_Speed) ,2)
 	_UI_process(delta)
 	pass
 	
 func _physics_process(delta: float) -> void:
-	Total_Time += 1
-	Projectiles()
-	Calc_Times(delta)
+	if Started and not GameOver:
+		Total_Time += 1
+		Projectiles()
+		Calc_Times(delta)
+	else:
+		Floor_Time = 0
+		Sink_Speed = Start_Sink_Speed
+		Air_Time = 0
+		Total_Time = 0
+		Points = 0
+		if Input.is_action_just_pressed("Jump") and GameOver:
+			SetGameOver(false)
+			Floor.collision_layer = 1
+			Player.Restart()
+			Lives = Max_Lives
+			RemoveProjectiles()
+		elif Input.is_action_just_pressed("Jump"):
+			StartGame()
 	
 func Calc_Times(delta : float):
 	if Sink_Speed > 30:
@@ -45,8 +67,9 @@ func Calc_Times(delta : float):
 	if Player.is_on_floor():
 		Air_Time = 0
 		Floor_Time += 1
+		Combo = 0
 		if Floor_Time > Sink_Speed:
-			GameOver = true
+			SetGameOver(true)
 	else:
 		Air_Time += 1
 		if Air_Time > 10:
@@ -61,7 +84,7 @@ func Projectiles():
 func SpawnProjectile():
 	var New_Projectile 
 	var Gen_Chance = randf()
-	if Gen_Chance < BombChance:
+	if Gen_Chance < Get_Bomb_Chance():
 		New_Projectile = preload("res://Bomb.tscn").instantiate()
 	else:
 		New_Projectile = preload("res://Points.tscn").instantiate()
@@ -70,20 +93,68 @@ func SpawnProjectile():
 		New_Projectile.Direction = New_Projectile.Directions.Right
 	ProjectileCollections.add_child(New_Projectile)
 
+func Get_Bomb_Chance():
+	if Total_Time > 4 * 30 * 60:
+		return BombChance + 0.4
+	else:
+		return BombChance + Total_Time / (30.0 * 600.0)
+	return BombChance
+
 func PlayerHit():
 	Lives -= 1
 	if Lives == 0:
-		GameOver = true
+		SetGameOver(true)
+		Floor.collision_layer = 0
 
 func CollectedPoints():
-	Points += 100
+	Points += CalculatePointWorth()
+	Combo += 1
+
+func CalculatePointWorth():
+	return round((100 * 2 ** floor(Total_Time / (60.0 * 60.0)) * (1.5 ** Combo))/10)
+
+func SetGameOver(value: bool):
+	GameOver = value
+	Player.GameOver = value
+	if value:
+		if Points > HighScore:
+			HighScore = Points
+		Player.Started = false
+		Started = false
+
+func StartGame():
+	Player.Started = true
+	Started = true
+
+func RemoveProjectiles():
+	var Projectiles = ProjectileCollections.get_children()
+	while Projectiles.size() > 0:
+		Projectiles[0].queue_free()
+		Projectiles.remove_at(0)
+
+
 #UI Control
 @export var Time_Keeper : Label
 @export var Point_Keeper : Label
+@export var GameOver_Label : Label
+@export var StartGame_Label : Label
+@export var HighScore_Label : Label
+
+@export var IceBergTexture : ColorRect
+
+
 
 func _UI_process(delta : float)-> void:
 	var Seconds = floor((Total_Time / 60) % 60)
 	var Minutes = floor((Total_Time / 60 - Seconds) / 60)
+	SetIceBergTexture()
 	Time_Keeper.text = "%s:%s" % [Minutes,str(Seconds).lpad(2,"0")]
+	HighScore_Label.text = "HIGHSCORE: %s" % HighScore
 	Point_Keeper.text = str(Points)
+	GameOver_Label.visible = GameOver
+	StartGame_Label.visible = not Started and not GameOver
 	pass
+
+func SetIceBergTexture():
+	IceBergTexture.size.x = 100 * (2 ** Lives) if Lives > 0 else 0
+	IceBergTexture.position.x = - IceBergTexture.size.x / 2

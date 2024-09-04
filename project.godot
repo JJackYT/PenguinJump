@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Boxes"
+config/name="PenguinJump"
 run/main_scene="res://Game.tscn"
 config/features=PackedStringArray("4.3", "Mobile")
 config/icon="res://icon.svg"

@@ -1,15 +1,43 @@
-[gd_scene load_steps=3 format=3 uid="uid://dgtql2w7edvai"]
+[gd_scene load_steps=6 format=3 uid="uid://dgtql2w7edvai"]
 
 [ext_resource type="Script" path="res://BombScript.gd" id="1_r415a"]
+[ext_resource type="Texture2D" uid="uid://dc0c2ad7uaesy" path="res://Assets/Images/Feather.png" id="2_d4u8p"]
+[ext_resource type="Texture2D" uid="uid://dyly3wl3toaa0" path="res://Assets/Images/Hawk.png" id="2_e5g2w"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rlat8"]
 size = Vector2(50, 50)
 
-[node name="Bomb" type="CharacterBody2D"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ibk1l"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 20.0
+angle_min = 1.07288e-05
+angle_max = 360.0
+spread = 180.0
+initial_velocity_min = 10.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, 0, 0)
+
+[node name="Bomb" type="CharacterBody2D" node_paths=PackedStringArray("Particles", "BombTexture")]
 collision_layer = 4
 collision_mask = 0
 script = ExtResource("1_r415a")
+Particles = NodePath("Particles")
+BombTexture = NodePath("TextureRect")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_rlat8")
 debug_color = Color(0.998534, 0, 0.139499, 0.42)
+
+[node name="Particles" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 20
+process_material = SubResource("ParticleProcessMaterial_ibk1l")
+texture = ExtResource("2_d4u8p")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_left = -25.0
+offset_top = -25.0
+offset_right = 25.0
+offset_bottom = 25.0
+texture = ExtResource("2_e5g2w")

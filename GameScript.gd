@@ -1,5 +1,5 @@
 extends Node2D
-
+@export_category("Gameplay")
 @export var Player : Node2D
 @export var Floor : Node2D
 @export var ProjectileCollections : Node2D
@@ -30,6 +30,7 @@ var HighScore : int = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	_AudioReady()
 	Player.CollectedPoint.connect(CollectedPoints)
 	Player.GotHit.connect(PlayerHit)
 	pass # Replace with function body.
@@ -39,6 +40,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	Floor.position.y = move_toward(Floor.position.y, 800 + (300 * Floor_Time / Sink_Speed) ,2)
 	_UI_process(delta)
+	_AudioProcess(delta)
 	pass
 	
 func _physics_process(delta: float) -> void:
@@ -101,7 +103,8 @@ func Get_Bomb_Chance():
 	return BombChance
 
 func PlayerHit():
-	Lives -= 1
+	if Lives > 0:
+		Lives -= 1
 	if Lives == 0:
 		SetGameOver(true)
 		Floor.collision_layer = 0
@@ -127,13 +130,15 @@ func StartGame():
 	Started = true
 
 func RemoveProjectiles():
-	var Projectiles = ProjectileCollections.get_children()
-	while Projectiles.size() > 0:
-		Projectiles[0].queue_free()
-		Projectiles.remove_at(0)
+	var ProjectilesLeft = ProjectileCollections.get_children()
+	while ProjectilesLeft.size() > 0:
+		ProjectilesLeft[0].queue_free()
+		ProjectilesLeft.remove_at(0)
 
 
 #UI Control
+@export_category("UI")
+
 @export var Time_Keeper : Label
 @export var Point_Keeper : Label
 @export var GameOver_Label : Label
@@ -141,10 +146,9 @@ func RemoveProjectiles():
 @export var HighScore_Label : Label
 
 @export var IceBergTexture : ColorRect
+@export var IceBergAnim : AnimatedSprite2D
 
-
-
-func _UI_process(delta : float)-> void:
+func _UI_process(_delta : float)-> void:
 	var Seconds = floor((Total_Time / 60) % 60)
 	var Minutes = floor((Total_Time / 60 - Seconds) / 60)
 	SetIceBergTexture()
@@ -156,5 +160,15 @@ func _UI_process(delta : float)-> void:
 	pass
 
 func SetIceBergTexture():
-	IceBergTexture.size.x = 100 * (2 ** Lives) if Lives > 0 else 0
-	IceBergTexture.position.x = - IceBergTexture.size.x / 2
+	IceBergAnim.frame = Lives
+	#IceBergTexture.size.x = 100 * (2 ** Lives) if Lives > 0 else 0
+	#IceBergTexture.position.x = - IceBergTexture.size.x / 2
+
+#Audio Control
+@export_category("Audio")
+@export var AudioPlayer : AudioStreamPlayer
+func _AudioReady():
+	AudioPlayer.play()
+	
+func _AudioProcess(delta : float):
+	pass

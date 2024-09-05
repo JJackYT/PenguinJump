@@ -1,15 +1,43 @@
-[gd_scene load_steps=3 format=3 uid="uid://bq4y3q3mbm6gd"]
+[gd_scene load_steps=6 format=3 uid="uid://bq4y3q3mbm6gd"]
 
 [ext_resource type="Script" path="res://PointsScript.gd" id="1_s0olg"]
+[ext_resource type="Texture2D" uid="uid://c2u13t8jmvdx6" path="res://Assets/Images/Fish.png" id="2_6l1ve"]
+[ext_resource type="Texture2D" uid="uid://bujmxg3pe1bnc" path="res://Assets/Images/Scale.png" id="3_3v6pl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nmsgl"]
 size = Vector2(50, 50)
 
-[node name="Points" type="CharacterBody2D"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3tous"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 20.0
+angle_min = 1.07288e-05
+angle_max = 360.0
+spread = 180.0
+initial_velocity_min = 10.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, 0, 0)
+
+[node name="Points" type="CharacterBody2D" node_paths=PackedStringArray("Particles", "FishTexture")]
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_s0olg")
+Particles = NodePath("Particles")
+FishTexture = NodePath("TextureRect")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_nmsgl")
 debug_color = Color(0.879187, 0.708884, 0, 0.847059)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_left = -25.0
+offset_top = -25.0
+offset_right = 25.0
+offset_bottom = 25.0
+texture = ExtResource("2_6l1ve")
+
+[node name="Particles" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 20
+process_material = SubResource("ParticleProcessMaterial_3tous")
+texture = ExtResource("3_3v6pl")

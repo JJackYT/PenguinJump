@@ -1,12 +1,53 @@
-[gd_scene load_steps=4 format=3 uid="uid://bapd0gqvgaqhg"]
+[gd_scene load_steps=12 format=3 uid="uid://bapd0gqvgaqhg"]
 
 [ext_resource type="Script" path="res://GameScript.gd" id="1_252pb"]
 [ext_resource type="PackedScene" uid="uid://d2vlwtxnstpob" path="res://Player.tscn" id="1_m1kiw"]
+[ext_resource type="Texture2D" uid="uid://ui3wtu7ewxno" path="res://Assets/Images/IceBerg.png" id="3_4ea4l"]
+[ext_resource type="AudioStream" uid="uid://di1cman8pcsc1" path="res://Assets/Sounds/atmo-sea-black-sea-waves-01.wav" id="4_wgce1"]
+
+[sub_resource type="Gradient" id="Gradient_wrim8"]
+offsets = PackedFloat32Array(0.012987, 1)
+colors = PackedColorArray(0, 0.854902, 0.886275, 1, 0, 0.298039, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_6oyis"]
+gradient = SubResource("Gradient_wrim8")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_up5pj"]
 size = Vector2(200, 50)
 
-[node name="Game" type="Node2D" node_paths=PackedStringArray("Player", "Floor", "ProjectileCollections", "Time_Keeper", "Point_Keeper", "GameOver_Label", "StartGame_Label", "HighScore_Label", "IceBergTexture")]
+[sub_resource type="AtlasTexture" id="AtlasTexture_t8pg4"]
+atlas = ExtResource("3_4ea4l")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3j5b7"]
+atlas = ExtResource("3_4ea4l")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_njfur"]
+atlas = ExtResource("3_4ea4l")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_c840w"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": null
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t8pg4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3j5b7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_njfur")
+}],
+"loop": true,
+"name": &"Full",
+"speed": 0.0
+}]
+
+[node name="Game" type="Node2D" node_paths=PackedStringArray("Player", "Floor", "ProjectileCollections", "Time_Keeper", "Point_Keeper", "GameOver_Label", "StartGame_Label", "HighScore_Label", "IceBergTexture", "IceBergAnim", "AudioPlayer")]
 script = ExtResource("1_252pb")
 Player = NodePath("Player")
 Floor = NodePath("Floor")
@@ -17,6 +58,15 @@ GameOver_Label = NodePath("UIControl/GameOver")
 StartGame_Label = NodePath("UIControl/StartGame")
 HighScore_Label = NodePath("UIControl/HighScoreLabel")
 IceBergTexture = NodePath("Floor/IceBergTexture")
+IceBergAnim = NodePath("Floor/IceBergAnim")
+AudioPlayer = NodePath("AudioStreamPlayer")
+
+[node name="BackGround" type="TextureRect" parent="."]
+offset_left = 1920.0
+offset_right = 3000.0
+offset_bottom = 1920.0
+rotation = 1.5708
+texture = SubResource("GradientTexture1D_6oyis")
 
 [node name="Player" parent="." instance=ExtResource("1_m1kiw")]
 position = Vector2(960, 750)
@@ -28,10 +78,19 @@ position = Vector2(960, 800)
 shape = SubResource("RectangleShape2D_up5pj")
 
 [node name="IceBergTexture" type="ColorRect" parent="Floor"]
+visible = false
 offset_left = -400.0
 offset_top = -25.0
 offset_right = 400.0
 offset_bottom = 25.0
+
+[node name="IceBergAnim" type="AnimatedSprite2D" parent="Floor"]
+position = Vector2(0, 20)
+scale = Vector2(25, 25)
+sprite_frames = SubResource("SpriteFrames_c840w")
+animation = &"Full"
+frame = 3
+speed_scale = 0.0
 
 [node name="UIControl" type="Node" parent="."]
 
@@ -109,3 +168,12 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ProjectileCollection" type="Node2D" parent="."]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_wgce1")
+volume_db = 24.0
+autoplay = true
+max_polyphony = 5
+bus = &"Hope Work Bus"
+
+[node name="SoundManager" type="Node" parent="."]

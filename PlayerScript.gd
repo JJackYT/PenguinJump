@@ -10,6 +10,8 @@ var MAX_CHARGE = 100
 
 @export var PointCollector : Area2D
 @export var BombCollector : Area2D
+@export var PlayerTexture : TextureRect
+@export var AudioPlayer : AudioStreamPlayer
 
 var on_floor : bool = false
 var Started : bool = false
@@ -18,7 +20,10 @@ var GameOver : bool = false
 func _ready():
 	pass
 
-func _process(delta:float):
+func _process(_delta:float):
+	PlayerTexture.self_modulate.g = move_toward(PlayerTexture.self_modulate.g,1,0.1)
+	PlayerTexture.self_modulate.b = move_toward(PlayerTexture.self_modulate.b,1,0.1)
+
 	if is_on_floor():
 		scale.x = JUMP_CHARGE / 500.0 + 1.0
 		scale.y = 1.0 - JUMP_CHARGE / 500.0 
@@ -58,10 +63,10 @@ func Jump():
 	JUMP_CHARGE = 0
 	pass
 
-func hit_floor(body):
+func hit_floor(_body):
 	on_floor = true
 	
-func unhit_floor(body):
+func unhit_floor(_body):
 	on_floor = false
 	
 func CollectPoint(Point):
@@ -69,8 +74,11 @@ func CollectPoint(Point):
 	CollectedPoint.emit()
 
 func BombHit(Bomb):
+	PlayerTexture.self_modulate.b = 0
+	PlayerTexture.self_modulate.g = 0
 	Bomb.Hit()
 	GotHit.emit()
+	AudioPlayer.play()
 
 func Restart():
 	position = Vector2(960,700)
